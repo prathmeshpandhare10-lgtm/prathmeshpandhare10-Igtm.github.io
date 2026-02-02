@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- 🔥 MOST IMPORTANT FIX -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Ananya 💘</title>
+
+<!-- Clean readable font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --pink:#ff5fa2;
+  --soft:#ffe6f2;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html, body{
+  width:100%;
+  height:100%;
+  margin:0;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#fff,var(--soft));
+  overflow:hidden;
+}
+
+/* ✅ RESPONSIVE CARD */
+.card{
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(14px);
+  padding:28px 22px;
+  border-radius:28px;
+
+  /* MAGIC PART */
+  width:90vw;          /* fills phone */
+  max-width:420px;    /* not too big on big phones */
+  min-width:300px;    /* not tiny */
+
+  max-height:85vh;
+  overflow-y:auto;
+
+  text-align:center;
+  box-shadow:0 25px 50px rgba(255,0,120,0.25);
+}
+
+/* Smooth scroll */
+.card::-webkit-scrollbar{
+  width:5px;
+}
+.card::-webkit-scrollbar-thumb{
+  background:rgba(255,95,162,0.4);
+  border-radius:10px;
+}
+
+/* Question */
+.loml{
+  font-size:1.5rem;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#ff3f8e;
+}
+
+.question{
+  font-size:1rem;
+  font-weight:600;
+  margin-top:6px;
+  letter-spacing:1.2px;
+}
+
+/* Buttons */
+.buttons{
+  margin-top:30px;
+  height:120px;
+  position:relative;
+}
+
+button{
+  padding:14px 30px;
+  font-size:1rem;
+  border:none;
+  border-radius:28px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+#yes{
+  background:var(--pink);
+  color:#fff;
+  box-shadow:0 10px 20px rgba(255,95,162,0.45);
+}
+
+#no{
+  background:#eee;
+  position:absolute;
+  left:50%;
+  top:65px;
+  transform:translateX(-50%);
+}
+
+#msg{
+  margin-top:12px;
+  font-size:0.85rem;
+  color:#ff3f8e;
+  min-height:18px;
+}
+
+/* YES MODE */
+.happy{
+  background:linear-gradient(135deg,#ff7eb3,#ffc3da);
+}
+
+/* Hearts & Confetti */
+.hearts, .confetti{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+.heart{
+  position:absolute;
+  font-size:22px;
+  animation:floatUp linear forwards;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(100vh) scale(1);opacity:1;}
+  to{transform:translateY(-10vh) scale(1.6);opacity:0;}
+}
+
+.conf{
+  position:absolute;
+  width:10px;
+  height:14px;
+  animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+  from{transform:translateY(-10vh) rotate(0deg);}
+  to{transform:translateY(110vh) rotate(360deg);}
+}
+
+/* BIG I LOVE YOU */
+#bigLove{
+  margin-top:28px;
+  font-size:2.6rem;
+  font-weight:800;
+  letter-spacing:3px;
+  color:#ff2f92;
+  opacity:0;
+  transform:scale(0.7);
+  animation:lovePop 1.3s ease forwards, glowPulse 2.4s ease-in-out infinite 1.3s;
+  text-shadow:
+    0 0 12px rgba(255,80,160,0.35),
+    0 0 24px rgba(255,80,160,0.25);
+}
+
+@keyframes lovePop{
+  to{opacity:1;transform:scale(1);}
+}
+
+@keyframes glowPulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+  100%{transform:scale(1);}
+}
+
+/* Mute */
+.mute{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+  background:#fff;
+  border:none;
+  border-radius:50%;
+  padding:10px 14px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <div class="loml">ANANYA, THE LOML</div>
+  <div class="question">WILL YOU BE MY VALENTINE?</div>
+
+  <div class="buttons">
+    <button id="yes">YES 💖</button>
+    <button id="no">NO 🙄</button>
+  </div>
+
+  <p id="msg"></p>
+</div>
+
+<div class="hearts" id="hearts"></div>
+<div class="confetti" id="confetti"></div>
+
+<button class="mute" id="mute">🔊</button>
+
+<audio id="music" loop autoplay>
+  <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_5b3f7f1a44.mp3">
+</audio>
+
+<script>
+const noBtn=document.getElementById("no");
+const yesBtn=document.getElementById("yes");
+const msg=document.getElementById("msg");
+const card=document.getElementById("card");
+const hearts=document.getElementById("hearts");
+const confetti=document.getElementById("confetti");
+const music=document.getElementById("music");
+const mute=document.getElementById("mute");
+
+let noCount=0;
+
+function moveNo(){
+  noCount++;
+  noBtn.style.transform=
+    `translate(${Math.random()*200-100}px,${Math.random()*100-50}px)`;
+  msg.innerText =
+    noCount<3 ? "❌ Wrong answer 😤 try again" :
+    noCount<6 ? "😭 bro why would you do this to me" :
+    "💀 nah stop trolling and press YES";
+}
+
+noBtn.addEventListener("mouseover",moveNo);
+noBtn.addEventListener("click",moveNo);
+
+yesBtn.addEventListener("click",()=>{
+  document.body.classList.add("happy");
+
+  card.innerHTML=`
+    <h1 style="color:#ff2f92;font-weight:800;">YAYYYYY 💕🎉</h1>
+
+    <p style="
+      font-size:1rem;
+      line-height:1.65;
+      margin-top:18px;
+      color:#ff2f92;
+      font-weight:600;
+    ">
+    It's good that you accepted my proposal cuz meko vaapas se reject nai hona tha 😭😭<br><br>
+
+    I love you sm 😭😭 and also if you would've said no, tera phone blast ho jaata 😝😝 (just kidding)<br><br>
+
+    Also I've taken thodi thodi help to make this website cuz itna bhi exactly humlog ko sikhaaya naiye,
+    but works right? Took a lot of time, so here's something in my style.<br><br>
+
+    I just miss you a lot, I hope you're doing well in your exams.
+    I really hope that you're not getting distracted or anything.<br><br>
+
+    I really really miss you and I can't get over the fact that these exams won't let us meet frequently
+    but we can't let that fact make us detach or drift away from each other.<br><br>
+
+    I just love you a lot and I can't even think of losing you baby,
+    you're just mine and I want you to stay mine forever 😘😋
+    </p>
+  `;
+
+  confettiBlast();
+  heartRain();
+  showBigLove();
+});
+
+function showBigLove(){
+  const big=document.createElement("div");
+  big.id="bigLove";
+  big.innerText="I LOVE YOU";
+  card.appendChild(big);
+
+  if(navigator.vibrate){
+    navigator.vibrate([200,120,200,120,350]);
+  }
+}
+
+function heartRain(){
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText=["💖","💘","💗","💝","💞"][Math.floor(Math.random()*5)];
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=(Math.random()*2+3)+"s";
+    hearts.appendChild(h);
+    setTimeout(()=>h.remove(),5000);
+  },220);
+}
+
+function confettiBlast(){
+  for(let i=0;i<130;i++){
+    const c=document.createElement("div");
+    c.className="conf";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=`hsl(${Math.random()*360},100%,70%)`;
+    confetti.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+mute.onclick=()=>{
+  music.muted=!music.muted;
+  mute.innerText=music.muted?"🔇":"🔊";
+};
+</script>
+
+</body>
+</html>
